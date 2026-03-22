@@ -12,75 +12,50 @@ text-align:center;
 padding-top:100px;
 font-family:Arial;
 }
-
-input{
-padding:10px;
-border:none;
-border-radius:5px;
-}
-
-button{
-padding:10px 20px;
-background:#00ff99;
-border:none;
-border-radius:5px;
-cursor:pointer;
-}
 </style>
-
-</head>
 
 <body>
 
-<h2>✅ Hoàn thành vượt link</h2>
-<p>Nhận point</p>
-
-<input id="user" placeholder="Username"><br><br>
-
-<button onclick="claim()">Nhận +1 Point</button>
-
-<p id="msg"></p>
+<h2>✅ Verify</h2>
+<p id="msg">Đang xử lý...</p>
 
 <script>
 
 const API="https://website-kiemtien.onrender.com";
 
-// ❗ chống bypass cơ bản
-if(!document.referrer.includes("link-target")){
-  document.body.innerHTML = "<h2>❌ Bạn chưa vượt link!</h2>";
+let user = localStorage.getItem("user");
+let token = localStorage.getItem("verify_token");
+let link_id = localStorage.getItem("link_id");
+
+// check basic
+if(!user || !token){
+document.body.innerHTML="❌ Không hợp lệ";
 }
 
-// ❗ check token
-if(!localStorage.getItem("verify_token")){
-  document.body.innerHTML = "<h2>❌ Truy cập không hợp lệ!</h2>";
-}
-
-async function claim(){
-
-let res=await fetch(API+"/reward",{
+// gửi request
+fetch(API+"/reward",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
-  username:user.value,
-  token: localStorage.getItem("verify_token")
+username:user,
+token:token,
+link_id:link_id
 })
-});
-
-let data=await res.json();
+})
+.then(res=>res.json())
+.then(data=>{
 
 if(data.msg==="ok"){
-msg.innerText="🎉 +1 Point | Tổng: "+data.money;
+msg.innerText="🎉 +1 point | Tổng: "+data.money;
+}else if(data.msg==="limit"){
+msg.innerText="❌ Hôm nay bạn đã vượt đủ 3 lần link này";
+}else{
+msg.innerText="Lỗi!";
+}
 
-// xoá token → tránh spam
 localStorage.removeItem("verify_token");
 
-}else if(data.msg==="wait"){
-msg.innerText="⏳ Chờ 1 giờ!";
-}else{
-msg.innerText="❌ Lỗi!";
-}
-
-}
+});
 
 </script>
 
