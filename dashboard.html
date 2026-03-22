@@ -14,23 +14,27 @@ font-family:Arial;
 }
 </style>
 
-</head>
-
 <body>
 
 <h2>Dashboard</h2>
 
 <p id="user"></p>
+<p id="point"></p>
 
 <script>
 
-let u = localStorage.getItem("user");
+const API="https://website-kiemtien.onrender.com";
+let user = localStorage.getItem("user");
 
-if(u){
-  document.getElementById("user").innerText = "User: " + u;
-}else{
-  document.getElementById("user").innerText = "Chưa đăng nhập";
-}
+if(!user) location.href="login.html";
+
+document.getElementById("user").innerText="User: "+user;
+
+fetch(API+"/user/"+user)
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("point").innerText="Point: "+data.money;
+});
 
 </script>
 
