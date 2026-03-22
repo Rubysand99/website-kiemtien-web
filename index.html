@@ -1,1 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TUYTAM STORE</title>
 
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#0f0f0f,#1a1a1a,#000);
+color:white;
+}
+
+/* menu */
+.menu-btn{
+position:fixed;
+top:15px;
+left:15px;
+font-size:28px;
+cursor:pointer;
+z-index:1000;
+}
+
+.menu{
+position:fixed;
+top:0;
+left:-250px;
+width:250px;
+height:100%;
+background:#111;
+padding:20px;
+transition:0.3s;
+}
+
+.menu a{
+display:block;
+color:white;
+margin:15px 0;
+text-decoration:none;
+}
+
+.menu.active{
+left:0;
+}
+
+/* main */
+.container{
+text-align:center;
+padding-top:100px;
+}
+
+button{
+padding:12px 25px;
+background:#00ff99;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#00cc77;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+<div class="menu" id="menu">
+<h3>Menu</h3>
+
+<a href="#" onclick="support()">💚 Ủng hộ shop</a>
+<a href="login.html">🔑 Đăng nhập</a>
+
+</div>
+
+<div class="container">
+<h1>✨ TUYTAM STORE ✨</h1>
+
+<p>Shop DonutSMP giá rẻ</p>
+
+<button onclick="support()">ỦNG HỘ SHOP</button>
+</div>
+
+<script>
+
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("active");
+}
+
+function support(){
+
+  window.open("https://link-target.net/1359000/25H5eIkwXq9L","_blank");
+
+  setTimeout(()=>{
+    window.location.href = "verify.html";
+  },5000);
+
+}
+
+</script>
+
+</body>
+</html>
