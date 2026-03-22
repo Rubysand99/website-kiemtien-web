@@ -29,7 +29,7 @@ border-radius:5px;
 
 <body>
 
-<h2>🔑 Đăng nhập hệ thống</h2>
+<h2>🔑 Login</h2>
 
 <input id="user" placeholder="Username"><br>
 <input id="pass" type="password" placeholder="Password"><br>
@@ -53,7 +53,7 @@ let data=await res.json();
 if(data.msg==="ok"){
 localStorage.setItem("user",user.value);
 location.href="dashboard.html";
-}else msg.innerText="Sai tài khoản!";
+}else msg.innerText="Sai!";
 }
 
 async function register(){
@@ -65,10 +65,10 @@ body:JSON.stringify({username:user.value,password:pass.value})
 let data=await res.json();
 
 if(data.msg==="ok"){
-msg.innerText="Đăng ký thành công!";
-}else msg.innerText="Tài khoản tồn tại!";
+msg.innerText="Đăng ký OK";
+}else msg.innerText="Tồn tại";
 }
 </script>
 
 </body>
-  </html>
+</html>
