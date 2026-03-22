@@ -14,33 +14,27 @@ color:white;
 text-align:center;
 }
 
-/* menu */
-.menu-btn{
-position:fixed;
-top:15px;
-left:15px;
-font-size:28px;
-cursor:pointer;
-}
-
-.menu{
+/* navbar */
+.navbar{
 position:fixed;
 top:0;
-left:-260px;
-width:260px;
-height:100%;
+width:100%;
 background:#111;
-padding:20px;
-transition:0.3s;
+padding:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+z-index:999;
 }
 
-.menu.active{ left:0; }
-
-.menu a{
-display:block;
-margin:15px 0;
+.navbar a{
 color:white;
+margin:0 10px;
 text-decoration:none;
+}
+
+.navbar .right{
+margin-right:10px;
 }
 
 /* content */
@@ -72,14 +66,19 @@ color:#00ffcc;
 
 <body>
 
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
-
-<div class="menu" id="menu">
-<h3>Menu</h3>
-<a href="login.html">🔑 Login</a>
+<!-- NAVBAR -->
+<div class="navbar">
+<div>
+<a href="#">🏠 Home</a>
 <a href="dashboard.html">📊 Dashboard</a>
 </div>
 
+<div class="right" id="auth">
+<a href="login.html">🔑 Login</a>
+</div>
+</div>
+
+<!-- CONTENT -->
 <div class="container">
 <div class="title">🎮 Earn Point System</div>
 
@@ -87,21 +86,36 @@ color:#00ffcc;
 
 <p class="online">🟢 <span id="online"></span> người đang online</p>
 
-<button onclick="goLink(1)">LINK 1</button>
-<button onclick="goLink(2)">LINK 2</button>
+<button onclick="goLink(1)">💰 LINK 1</button>
+<button onclick="goLink(2)">💰 LINK 2</button>
 </div>
 
 <script>
-
-function toggleMenu(){
-document.getElementById("menu").classList.toggle("active");
-}
 
 // fake online
 document.getElementById("online").innerText =
 10 + Math.floor(Math.random()*30);
 
+// hiển thị user nếu đã login
+let user = localStorage.getItem("user");
+
+if(user){
+document.getElementById("auth").innerHTML =
+`👤 ${user} | <a href="#" onclick="logout()">Logout</a>`;
+}
+
+function logout(){
+localStorage.removeItem("user");
+location.reload();
+}
+
 function goLink(id){
+if(!user){
+alert("Bạn cần đăng nhập!");
+location.href="login.html";
+return;
+}
+
 localStorage.setItem("verify_token", Date.now());
 localStorage.setItem("link_id", id);
 
