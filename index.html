@@ -3,55 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TUYTAM STORE</title>
+<title>Earn Points System</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:linear-gradient(135deg,#0f0f0f,#1a1a1a,#000);
+background:radial-gradient(circle at top,#1a1a1a,#000);
 color:white;
 }
 
-/* menu */
 .menu-btn{
 position:fixed;
 top:15px;
 left:15px;
 font-size:28px;
 cursor:pointer;
-z-index:1000;
 }
 
 .menu{
 position:fixed;
 top:0;
-left:-250px;
-width:250px;
+left:-260px;
+width:260px;
 height:100%;
 background:#111;
 padding:20px;
 transition:0.3s;
 }
 
-.menu a{
-display:block;
-color:white;
-margin:15px 0;
-text-decoration:none;
-}
-
 .menu.active{
 left:0;
 }
 
-/* main */
+.menu a{
+display:block;
+margin:15px 0;
+color:white;
+text-decoration:none;
+}
+
 .container{
 text-align:center;
-padding-top:100px;
+padding-top:120px;
+}
+
+.title{
+font-size:32px;
+color:#00ffcc;
+}
+
+.desc{
+color:#aaa;
+max-width:400px;
+margin:auto;
 }
 
 button{
+margin-top:20px;
 padding:12px 25px;
 background:#00ff99;
 border:none;
@@ -59,12 +68,7 @@ border-radius:8px;
 cursor:pointer;
 font-weight:bold;
 }
-
-button:hover{
-background:#00cc77;
-}
 </style>
-
 </head>
 
 <body>
@@ -74,17 +78,25 @@ background:#00cc77;
 <div class="menu" id="menu">
 <h3>Menu</h3>
 
-<a href="#" onclick="support()">💚 Ủng hộ shop</a>
 <a href="login.html">🔑 Đăng nhập</a>
+<a href="#" onclick="support()">💚 Kiếm Point</a>
+
+<p style="color:#aaa;font-size:13px;">
+Vượt link quảng cáo → hệ thống nhận ~500đ<br>
+Bạn sẽ nhận point để đổi vật phẩm DonutSMP
+</p>
 
 </div>
 
 <div class="container">
-<h1>✨ TUYTAM STORE ✨</h1>
+<div class="title">🎮 Earn Points System</div>
 
-<p>Shop DonutSMP giá rẻ</p>
+<p class="desc">
+Kiếm point miễn phí bằng cách vượt link.<br>
+Dùng point để đổi item, money trong DonutSMP.
+</p>
 
-<button onclick="support()">ỦNG HỘ SHOP</button>
+<button onclick="support()">KIẾM POINT NGAY</button>
 </div>
 
 <script>
@@ -94,13 +106,11 @@ document.getElementById("menu").classList.toggle("active");
 }
 
 function support(){
+window.open("https://link-target.net/1359000/25H5eIkwXq9L","_blank");
 
-  window.open("https://link-target.net/1359000/25H5eIkwXq9L","_blank");
-
-  setTimeout(()=>{
-    window.location.href = "verify.html";
-  },5000);
-
+setTimeout(()=>{
+window.location.href="verify.html";
+},5000);
 }
 
 </script>
