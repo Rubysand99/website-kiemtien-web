@@ -12,24 +12,28 @@ text-align:center;
 padding-top:100px;
 font-family:Arial;
 }
+
 input{
 padding:10px;
 border:none;
 border-radius:5px;
 }
+
 button{
 padding:10px 20px;
 background:#00ff99;
 border:none;
 border-radius:5px;
+cursor:pointer;
 }
 </style>
+
 </head>
 
 <body>
 
 <h2>✅ Hoàn thành vượt link</h2>
-<p>Nhận point ngay</p>
+<p>Nhận point</p>
 
 <input id="user" placeholder="Username"><br><br>
 
@@ -41,22 +45,39 @@ border-radius:5px;
 
 const API="https://website-kiemtien.onrender.com";
 
+// ❗ chống bypass cơ bản
+if(!document.referrer.includes("link-target")){
+  document.body.innerHTML = "<h2>❌ Bạn chưa vượt link!</h2>";
+}
+
+// ❗ check token
+if(!localStorage.getItem("verify_token")){
+  document.body.innerHTML = "<h2>❌ Truy cập không hợp lệ!</h2>";
+}
+
 async function claim(){
 
 let res=await fetch(API+"/reward",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
-body:JSON.stringify({username:user.value})
+body:JSON.stringify({
+  username:user.value,
+  token: localStorage.getItem("verify_token")
+})
 });
 
 let data=await res.json();
 
 if(data.msg==="ok"){
 msg.innerText="🎉 +1 Point | Tổng: "+data.money;
+
+// xoá token → tránh spam
+localStorage.removeItem("verify_token");
+
 }else if(data.msg==="wait"){
 msg.innerText="⏳ Chờ 1 giờ!";
 }else{
-msg.innerText="Lỗi!";
+msg.innerText="❌ Lỗi!";
 }
 
 }
