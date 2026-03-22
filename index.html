@@ -13,7 +13,31 @@ background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 text-align:center;
 }
+.menu-btn{
+position:fixed;
+top:15px;
+left:15px;
+font-size:30px;
+cursor:pointer;
+color:#00ffcc;
+z-index:1000;
+}
 
+.menu{
+position:fixed;
+top:0;
+left:-260px;
+width:260px;
+height:100%;
+background:#111;
+padding:20px;
+transition:0.3s;
+z-index:999;
+}
+
+.menu.active{
+left:0;
+}
 /* navbar */
 .navbar{
 position:fixed;
@@ -66,6 +90,13 @@ color:#00ffcc;
 
 <body>
 
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+<div class="menu" id="menu">
+<h3>Menu</h3>
+<a href="login.html">🔑 Login</a>
+<a href="dashboard.html">📊 Dashboard</a>
+</div>
 <!-- NAVBAR -->
 <div class="navbar">
 <div>
@@ -109,6 +140,10 @@ localStorage.removeItem("user");
 location.reload();
 }
 
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("active");
+}
+  
 function goLink(id){
 if(!user){
 alert("Bạn cần đăng nhập!");
