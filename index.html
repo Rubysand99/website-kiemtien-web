@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Earn Points System</title>
+<title>EarnPoint</title>
 
 <style>
 body{
@@ -11,106 +11,44 @@ margin:0;
 font-family:Arial;
 background:radial-gradient(circle at top,#1a1a1a,#000);
 color:white;
-}
-
-.menu-btn{
-position:fixed;
-top:15px;
-left:15px;
-font-size:28px;
-cursor:pointer;
-}
-
-.menu{
-position:fixed;
-top:0;
-left:-260px;
-width:260px;
-height:100%;
-background:#111;
-padding:20px;
-transition:0.3s;
-}
-
-.menu.active{
-left:0;
-}
-
-.menu a{
-display:block;
-margin:15px 0;
-color:white;
-text-decoration:none;
-}
-
-.container{
 text-align:center;
 padding-top:120px;
 }
 
-.title{
-font-size:32px;
-color:#00ffcc;
-}
-
-.desc{
-color:#aaa;
-max-width:400px;
-margin:auto;
-}
-
 button{
-margin-top:20px;
-padding:12px 25px;
+padding:15px 30px;
 background:#00ff99;
 border:none;
-border-radius:8px;
+border-radius:10px;
+font-size:18px;
 cursor:pointer;
-font-weight:bold;
+}
+
+button:hover{
+background:#00cc77;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="menu-btn" onclick="toggleMenu()">☰</div>
+<h1>🎮 Earn Point System</h1>
 
-<div class="menu" id="menu">
-<h3>Menu</h3>
+<p>Vượt link để nhận point</p>
 
-<a href="login.html">🔑 Đăng nhập</a>
-<a href="#" onclick="support()">💚 Kiếm Point</a>
-
-<p style="color:#aaa;font-size:13px;">
-Vượt link quảng cáo → hệ thống nhận ~500đ<br>
-Bạn sẽ nhận point để đổi vật phẩm DonutSMP
-</p>
-
-</div>
-
-<div class="container">
-<div class="title">🎮 Earn Points System</div>
-
-<p class="desc">
-Kiếm point miễn phí bằng cách vượt link.<br>
-Dùng point để đổi item, money trong DonutSMP.
-</p>
-
-<button onclick="support()">KIẾM POINT NGAY</button>
-</div>
+<button onclick="support()">KIẾM POINT</button>
 
 <script>
 
-function toggleMenu(){
-document.getElementById("menu").classList.toggle("active");
-}
-
 function support(){
-window.open("https://link-target.net/1359000/25H5eIkwXq9L","_blank");
 
-setTimeout(()=>{
-window.location.href="verify.html";
-},5000);
+  // lưu token chống spam
+  localStorage.setItem("verify_token", Date.now());
+
+  // chuyển THẲNG sang link rút gọn (không quay lại được)
+  window.location.href = "https://link-target.net/1359000/25H5eIkwXq9L";
+
 }
 
 </script>
