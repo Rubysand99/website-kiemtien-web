@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
 
+<style>
+body{
+background:#000;
+color:white;
+text-align:center;
+padding-top:100px;
+font-family:Arial;
+}
+input{
+padding:10px;
+margin:5px;
+border:none;
+border-radius:5px;
+}
+button{
+padding:10px 20px;
+background:#00ff99;
+border:none;
+border-radius:5px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🔑 Đăng nhập hệ thống</h2>
+
+<input id="user" placeholder="Username"><br>
+<input id="pass" type="password" placeholder="Password"><br>
+
+<button onclick="login()">Login</button>
+<button onclick="register()">Register</button>
+
+<p id="msg"></p>
+
+<script>
+const API="https://website-kiemtien.onrender.com";
+
+async function login(){
+let res=await fetch(API+"/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:user.value,password:pass.value})
+});
+let data=await res.json();
+
+if(data.msg==="ok"){
+localStorage.setItem("user",user.value);
+location.href="dashboard.html";
+}else msg.innerText="Sai tài khoản!";
+}
+
+async function register(){
+let res=await fetch(API+"/register",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:user.value,password:pass.value})
+});
+let data=await res.json();
+
+if(data.msg==="ok"){
+msg.innerText="Đăng ký thành công!";
+}else msg.innerText="Tài khoản tồn tại!";
+}
+</script>
+
+</body>
+  </html>
