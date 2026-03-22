@@ -1,1 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Verify</title>
 
+<style>
+body{
+background:#000;
+color:white;
+text-align:center;
+padding-top:100px;
+font-family:Arial;
+}
+input{
+padding:10px;
+border:none;
+border-radius:5px;
+}
+button{
+padding:10px 20px;
+background:#00ff99;
+border:none;
+border-radius:5px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>✅ Hoàn thành vượt link</h2>
+<p>Nhận point ngay</p>
+
+<input id="user" placeholder="Username"><br><br>
+
+<button onclick="claim()">Nhận +1 Point</button>
+
+<p id="msg"></p>
+
+<script>
+
+const API="https://website-kiemtien.onrender.com";
+
+async function claim(){
+
+let res=await fetch(API+"/reward",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username:user.value})
+});
+
+let data=await res.json();
+
+if(data.msg==="ok"){
+msg.innerText="🎉 +1 Point | Tổng: "+data.money;
+}else if(data.msg==="wait"){
+msg.innerText="⏳ Chờ 1 giờ!";
+}else{
+msg.innerText="Lỗi!";
+}
+
+}
+
+</script>
+
+</body>
+</html>
