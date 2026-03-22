@@ -9,46 +9,104 @@
 body{
 margin:0;
 font-family:Arial;
-background:radial-gradient(circle at top,#1a1a1a,#000);
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 text-align:center;
+}
+
+/* menu */
+.menu-btn{
+position:fixed;
+top:15px;
+left:15px;
+font-size:28px;
+cursor:pointer;
+}
+
+.menu{
+position:fixed;
+top:0;
+left:-260px;
+width:260px;
+height:100%;
+background:#111;
+padding:20px;
+transition:0.3s;
+}
+
+.menu.active{ left:0; }
+
+.menu a{
+display:block;
+margin:15px 0;
+color:white;
+text-decoration:none;
+}
+
+/* content */
+.container{
 padding-top:120px;
 }
 
+.title{
+font-size:32px;
+color:#00ffcc;
+}
+
 button{
+margin-top:20px;
 padding:15px 30px;
 background:#00ff99;
 border:none;
 border-radius:10px;
-font-size:18px;
 cursor:pointer;
+font-size:18px;
 }
 
-button:hover{
-background:#00cc77;
+.online{
+margin-top:10px;
+color:#00ffcc;
 }
 </style>
-
 </head>
 
 <body>
 
-<h1>🎮 Earn Point System</h1>
+<div class="menu-btn" onclick="toggleMenu()">☰</div>
+
+<div class="menu" id="menu">
+<h3>Menu</h3>
+<a href="login.html">🔑 Login</a>
+<a href="dashboard.html">📊 Dashboard</a>
+</div>
+
+<div class="container">
+<div class="title">🎮 Earn Point System</div>
 
 <p>Vượt link để nhận point</p>
 
-<button onclick="support()">KIẾM POINT</button>
+<p class="online">🟢 <span id="online"></span> người đang online</p>
+
+<button onclick="goLink(1)">LINK 1</button>
+<button onclick="goLink(2)">LINK 2</button>
+</div>
 
 <script>
 
-function support(){
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("active");
+}
 
-  // lưu token chống spam
-  localStorage.setItem("verify_token", Date.now());
+// fake online
+document.getElementById("online").innerText =
+10 + Math.floor(Math.random()*30);
 
-  // chuyển THẲNG sang link rút gọn (không quay lại được)
-  window.location.href = "https://link-target.net/1359000/VoDwwubZO94C";
+function goLink(id){
+localStorage.setItem("verify_token", Date.now());
+localStorage.setItem("link_id", id);
 
+// link rút gọn
+window.location.href = "https://link-target.net/1359000/25H5eIkwXq9L";
 }
 
 </script>
