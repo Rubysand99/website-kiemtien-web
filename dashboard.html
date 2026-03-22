@@ -6,65 +6,30 @@
 
 <style>
 body{
-background:#0f0f0f;
+background:#111;
 color:white;
 text-align:center;
 padding-top:100px;
 font-family:Arial;
 }
-.card{
-background:#1a1a1a;
-padding:20px;
-border-radius:10px;
-display:inline-block;
-}
-button{
-margin-top:10px;
-padding:10px 20px;
-background:#00ff99;
-border:none;
-border-radius:6px;
-}
 </style>
+
 </head>
 
 <body>
 
-<div class="card">
-<h2>🎮 Dashboard</h2>
+<h2>Dashboard</h2>
 
 <p id="user"></p>
-<p id="point">Point: ...</p>
-
-<button onclick="earn()">Kiếm thêm point</button>
-
-<h3>🎁 Đổi thưởng</h3>
-
-<button onclick="redeem('Money 1M')">Đổi 1M Money</button>
-<button onclick="redeem('Spawner')">Đổi Spawner</button>
-
-<p id="msg"></p>
-</div>
 
 <script>
 
-const API="https://website-kiemtien.onrender.com";
-let username=localStorage.getItem("user");
+let u = localStorage.getItem("user");
 
-if(!username) location.href="login.html";
-
-user.innerText="User: "+username;
-
-async function earn(){
-window.open("https://link-target.net/1359000/25H5eIkwXq9L","_blank");
-
-setTimeout(()=>{
-location.href="verify.html";
-},5000);
-}
-
-function redeem(item){
-msg.innerText="📩 Đã gửi yêu cầu đổi: "+item+" (admin xử lý)";
+if(u){
+  document.getElementById("user").innerText = "User: " + u;
+}else{
+  document.getElementById("user").innerText = "Chưa đăng nhập";
 }
 
 </script>
