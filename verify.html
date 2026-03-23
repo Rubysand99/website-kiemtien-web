@@ -1,96 +1,33 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verify</title>
-
-<style>
-body{
-margin:0;
-font-family:Arial;
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-color:white;
-text-align:center;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.box{
-background:#111;
-padding:30px;
-border-radius:15px;
-box-shadow:0 0 15px #00ffcc;
-}
-
-h2{
-color:#00ffcc;
-}
-
-button{
-margin-top:20px;
-padding:10px 20px;
-background:#00ff99;
-border:none;
-border-radius:10px;
-cursor:pointer;
-}
-</style>
 </head>
 
-<body>
+<body style="text-align:center; background:black; color:white; padding-top:100px;">
 
-<div class="box">
-<h2>🔍 Đang xác minh...</h2>
-<p id="status">Vui lòng chờ...</p>
-
-<button onclick="goHome()">⬅ Quay về</button>
-</div>
+<h2 id="text">Đang kiểm tra...</h2>
 
 <script>
 
-// ====== CHECK LOGIN ======
-let user = localStorage.getItem("user");
-let link_id = localStorage.getItem("link_id");
+// chống fake cơ bản
 let token = localStorage.getItem("verify_token");
-
-if(!user){
-document.getElementById("status").innerText = "❌ Bạn chưa đăng nhập!";
-setTimeout(()=> location.href="login.html",2000);
-throw new Error("No user");
-}
-
-// ====== CHỐNG FAKE ======
 if(!token){
-document.getElementById("status").innerText = "❌ Bạn chưa vượt link!";
-throw new Error("No token");
-}
+  document.getElementById("text").innerText = "❌ Bạn chưa vượt link!";
+}else{
 
-// ====== GỌI SERVER ======
-fetch("https://website-kiemtien.onrender.com/verify", {
-method: "POST",
-headers: {"Content-Type":"application/json"},
-body: JSON.stringify({
-username: user,
-link_id: link_id
-})
-})
-.then(res=>res.text())
-.then(msg=>{
-document.getElementById("status").innerText = msg;
+  fetch("https://website-kiemtien.onrender.com/verify", {
+    method: "POST"
+  })
+  .then(res=>res.text())
+  .then(code=>{
+    document.getElementById("text").innerText = "🎁 Code của bạn: " + code;
 
-// xoá token tránh spam
-localStorage.removeItem("verify_token");
-})
-.catch(()=>{
-document.getElementById("status").innerText = "❌ Lỗi server!";
-});
+    // xoá token để không spam
+    localStorage.removeItem("verify_token");
+  });
 
-// ====== BACK ======
-function goHome(){
-location.href="index.html";
 }
 
 </script>
