@@ -1,61 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verify</title>
 
 <style>
 body{
-background:#000;
+margin:0;
+font-family:Arial;
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 text-align:center;
-padding-top:100px;
-font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:#111;
+padding:30px;
+border-radius:15px;
+box-shadow:0 0 15px #00ffcc;
+}
+
+h2{
+color:#00ffcc;
+}
+
+button{
+margin-top:20px;
+padding:10px 20px;
+background:#00ff99;
+border:none;
+border-radius:10px;
+cursor:pointer;
 }
 </style>
+</head>
 
 <body>
 
-<h2>✅ Verify</h2>
-<p id="msg">Đang xử lý...</p>
+<div class="box">
+<h2>🔍 Đang xác minh...</h2>
+<p id="status">Vui lòng chờ...</p>
+
+<button onclick="goHome()">⬅ Quay về</button>
+</div>
 
 <script>
 
-const API="https://website-kiemtien.onrender.com";
-
+// ====== CHECK LOGIN ======
 let user = localStorage.getItem("user");
-let token = localStorage.getItem("verify_token");
 let link_id = localStorage.getItem("link_id");
+let token = localStorage.getItem("verify_token");
 
-// check basic
-if(!user || !token){
-document.body.innerHTML="❌ Không hợp lệ";
+if(!user){
+document.getElementById("status").innerText = "❌ Bạn chưa đăng nhập!";
+setTimeout(()=> location.href="login.html",2000);
+throw new Error("No user");
 }
 
-// gửi request
-fetch(API+"/reward",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-username:user,
-token:token,
-link_id:link_id
-})
-})
-.then(res=>res.json())
-.then(data=>{
-
-if(data.msg==="ok"){
-msg.innerText="🎉 +1 point | Tổng: "+data.money;
-}else if(data.msg==="limit"){
-msg.innerText="❌ Hôm nay bạn đã vượt đủ 3 lần link này";
-}else{
-msg.innerText="Lỗi!";
+// ====== CHỐNG FAKE ======
+if(!token){
+document.getElementById("status").innerText = "❌ Bạn chưa vượt link!";
+throw new Error("No token");
 }
 
+// ====== GỌI SERVER ======
+fetch("https://website-kiemtien.onrender.com/verify", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({
+username: user,
+link_id: link_id
+})
+})
+.then(res=>res.text())
+.then(msg=>{
+document.getElementById("status").innerText = msg;
+
+// xoá token tránh spam
 localStorage.removeItem("verify_token");
-
+})
+.catch(()=>{
+document.getElementById("status").innerText = "❌ Lỗi server!";
 });
+
+// ====== BACK ======
+function goHome(){
+location.href="index.html";
+}
 
 </script>
 
