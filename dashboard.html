@@ -1,42 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
-
-<style>
-body{
-background:#111;
-color:white;
-text-align:center;
-padding-top:100px;
-font-family:Arial;
-}
-</style>
-
-<body>
-
-<h2>Dashboard</h2>
-
-<p id="user"></p>
-<p id="point"></p>
-
-<script>
-
-const API="https://website-kiemtien.onrender.com";
-let user = localStorage.getItem("user");
-
-if(!user) location.href="login.html";
-
-document.getElementById("user").innerText="User: "+user;
-
-fetch(API+"/user/"+user)
-.then(res=>res.json())
-.then(data=>{
-document.getElementById("point").innerText="Point: "+data.money;
-});
-
-</script>
-
+<body style="background:black;color:white;text-align:center;padding-top:100px;">
+<h2>Dashboard đang phát triển...</h2>
 </body>
 </html>
