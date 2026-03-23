@@ -13,8 +13,9 @@
 
 // chống fake cơ bản
 let token = localStorage.getItem("verify_token");
+
 if(!token){
-  document.getElementById("text").innerText = "❌ Bạn chưa vượt link!";
+  document.body.innerText = "❌ Bạn chưa vượt link!";
 }else{
 
   fetch("https://website-kiemtien.onrender.com/verify", {
@@ -22,9 +23,7 @@ if(!token){
   })
   .then(res=>res.text())
   .then(code=>{
-    document.getElementById("text").innerText = "🎁 Code của bạn: " + code;
-
-    // xoá token để không spam
+    document.body.innerText = "Code: " + code;
     localStorage.removeItem("verify_token");
   });
 
