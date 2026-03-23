@@ -32,10 +32,11 @@ button{
 
 <script>
 function goLink(){
-  localStorage.setItem("verify_token", Date.now());
+  let token = Math.random().toString(36);
+  localStorage.setItem("verify_token", token);
 
-  // link rút gọn của bạn
   window.location.href = "https://link-target.net/1359000/VoDwwubZO94C";
+}
 }
 </script>
 </body>
