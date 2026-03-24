@@ -5,17 +5,16 @@
 <title>Verify</title>
 </head>
 
-<body style="text-align:center; background:black; color:white; padding-top:100px;">
+<body style="background:black;color:white;text-align:center;padding-top:100px;">
 
 <h2 id="text">Đang kiểm tra...</h2>
 
 <script>
 
-// chống fake cơ bản
 let token = localStorage.getItem("verify_token");
 
 if(!token){
-  document.body.innerText = "❌ Bạn chưa vượt link!";
+  document.getElementById("text").innerText = "❌ Bạn chưa vượt link!";
 }else{
 
   fetch("https://website-kiemtien.onrender.com/verify", {
@@ -23,7 +22,8 @@ if(!token){
   })
   .then(res=>res.text())
   .then(code=>{
-    document.body.innerText = "Code: " + code;
+    document.getElementById("text").innerText = "🎁 Code: " + code;
+
     localStorage.removeItem("verify_token");
   });
 
