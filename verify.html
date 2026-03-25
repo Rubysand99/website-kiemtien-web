@@ -1,14 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-  <title>Verify</title>
+  <meta charset="UTF-8">
+  <title>Nhận Code</title>
+
+  <!-- Cloudflare Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+      background: #0f172a;
+      color: white;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #22c55e;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Nhận Code</h2>
+<h1>🎁 Nhận Code</h1>
 
+<!-- CAPTCHA -->
 <div class="cf-turnstile" data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"></div>
+
+<br><br>
 
 <button onclick="getCode()">Lấy Code</button>
 
@@ -16,48 +52,72 @@
 
 <script>
 function getCode(){
+
   const userId = localStorage.getItem("user") || "guest";
 
+  // fingerprint đơn giản
   const fp = btoa(navigator.userAgent + screen.width + screen.height);
+
   const token = localStorage.getItem("token") || "";
 
   const captcha = document.querySelector("[name='cf-turnstile-response']").value;
 
+  const status = document.getElementById("status");
+
+  status.innerText = "⏳ Đang xử lý...";
+
   fetch("https://website-kiemtien.onrender.com/get-code?userId="
     + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captcha)
-  .then(res=>res.json())
-  .then(data=>{
+  .then(res => res.json())
+  .then(data => {
 
     if(data.token){
       localStorage.setItem("token", data.token);
     }
 
-    const status = document.getElementById("status");
-
     if(data.status === "ok"){
       status.innerText = "🎁 Code: " + data.code;
     }
+
     else if(data.status === "limit"){
       status.innerText = "🚫 Hết lượt hôm nay";
     }
+
     else if(data.status === "cooldown"){
-      status.innerText = "⏱️ Đợi 15s";
+      status.innerText = "⏱️ Đợi 15 giây";
     }
+
     else if(data.status === "vpn_block"){
       status.innerText = "🚫 Không dùng VPN";
     }
+
     else if(data.status === "multi_detect"){
-      status.innerText = "🚫 Nhiều acc cùng IP";
+      status.innerText = "🚫 Quá nhiều tài khoản cùng IP";
     }
+
     else if(data.status === "device_limit"){
-      status.innerText = "🚫 Thiết bị dùng quá nhiều";
+      status.innerText = "🚫 Thiết bị dùng quá nhiều tài khoản";
     }
+
     else if(data.status === "captcha_fail"){
-      status.innerText = "❌ Lỗi captcha";
+      status.innerText = "❌ Vui lòng xác minh captcha";
     }
+
     else if(data.status === "spam"){
-      status.innerText = "🚫 Spam quá nhanh";
+      status.innerText = "🚫 Bạn đang spam quá nhanh";
     }
+
+    else if(data.status === "device_changed"){
+      status.innerText = "🚫 Thiết bị không hợp lệ";
+    }
+
+    else{
+      status.innerText = "❌ Lỗi server";
+    }
+
+  })
+  .catch(() => {
+    status.innerText = "❌ Không kết nối được server";
   });
 }
 </script>
