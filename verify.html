@@ -51,27 +51,33 @@
 <p id="status"></p>
 
 <script>
-function getCode(){
-
-  const userId = localStorage.getItem("user") || "guest";
-
-  // fingerprint đơn giản
-  const fp = btoa(navigator.userAgent + screen.width + screen.height);
-
-  const token = localStorage.getItem("token") || "";
-
-  const captchaEl = document.querySelector("[name='cf-turnstile-response']");
-  
-  const captcha = captchaEl ? captchaEl.value : "";
+async function getCode(){
 
   const status = document.getElementById("status");
-
   status.innerText = "⏳ Đang xử lý...";
 
-  fetch("https://website-kiemtien.onrender.com/get-code?userId="
-    + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captcha)
-  .then(res => res.json())
-  .then(data => {
+  try {
+    const userId = localStorage.getItem("user") || "guest";
+
+    // fingerprint đơn giản
+    const fp = btoa(navigator.userAgent + screen.width + screen.height);
+
+    const token = localStorage.getItem("token") || "";
+
+    // FIX CAPTCHA (chuẩn)
+    const captcha = document.querySelector("textarea[name='cf-turnstile-response']")?.value || "";
+
+    if(!captcha){
+      status.innerText = "❌ Vui lòng tick captcha trước";
+      return;
+    }
+
+    const res = await fetch(
+      "https://website-kiemtien.onrender.com/get-code?userId="
+      + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captcha
+    );
+
+    const data = await res.json();
 
     if(data.token){
       localStorage.setItem("token", data.token);
@@ -80,47 +86,38 @@ function getCode(){
     if(data.status === "ok"){
       status.innerText = "🎁 Code: " + data.code;
     }
-
     else if(data.status === "limit"){
       status.innerText = "🚫 Hết lượt hôm nay";
     }
-
     else if(data.status === "cooldown"){
       status.innerText = "⏱️ Đợi 15 giây";
     }
-
     else if(data.status === "vpn_block"){
       status.innerText = "🚫 Không dùng VPN";
     }
-
     else if(data.status === "multi_detect"){
       status.innerText = "🚫 Quá nhiều tài khoản cùng IP";
     }
-
     else if(data.status === "device_limit"){
       status.innerText = "🚫 Thiết bị dùng quá nhiều tài khoản";
     }
-
     else if(data.status === "captcha_fail"){
-      status.innerText = "❌ Vui lòng xác minh captcha";
+      status.innerText = "❌ Captcha không hợp lệ";
     }
-
     else if(data.status === "spam"){
       status.innerText = "🚫 Bạn đang spam quá nhanh";
     }
-
     else if(data.status === "device_changed"){
       status.innerText = "🚫 Thiết bị không hợp lệ";
     }
-
     else{
       status.innerText = "❌ Lỗi server";
     }
 
-  })
-  .catch(() => {
+  } catch (err) {
     status.innerText = "❌ Không kết nối được server";
-  });
+    console.error(err);
+  }
 }
 </script>
 
