@@ -60,7 +60,9 @@ function getCode(){
 
   const token = localStorage.getItem("token") || "";
 
-  const captcha = document.querySelector("[name='cf-turnstile-response']").value;
+  const captchaEl = document.querySelector("[name='cf-turnstile-response']");
+  
+  const captcha = captchaEl ? captchaEl.value : "";
 
   const status = document.getElementById("status");
 
