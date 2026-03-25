@@ -41,8 +41,11 @@
 
 <h1>🎁 Nhận Code</h1>
 
-<!-- CAPTCHA -->
-<div class="cf-turnstile" data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"></div>
+<!-- CAPTCHA AUTO -->
+<div class="cf-turnstile"
+     data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"
+     data-callback="onCaptchaSuccess">
+</div>
 
 <br><br>
 
@@ -51,30 +54,35 @@
 <p id="status"></p>
 
 <script>
+let captchaToken = "";
+
+// nhận token tự động từ captcha
+function onCaptchaSuccess(token){
+  captchaToken = token;
+}
+
+// lấy code
 async function getCode(){
 
   const status = document.getElementById("status");
+
+  const userId = localStorage.getItem("user") || "guest";
+  const fp = btoa(navigator.userAgent + screen.width + screen.height);
+  const token = localStorage.getItem("token") || "";
+
+  // nếu captcha chưa sẵn sàng
+  if(!captchaToken){
+    status.innerText = "⏳ Đang xác minh captcha...";
+    return;
+  }
+
   status.innerText = "⏳ Đang xử lý...";
 
   try {
-    const userId = localStorage.getItem("user") || "guest";
-
-    // fingerprint đơn giản
-    const fp = btoa(navigator.userAgent + screen.width + screen.height);
-
-    const token = localStorage.getItem("token") || "";
-
-    // FIX CAPTCHA (chuẩn)
-    const captcha = document.querySelector("textarea[name='cf-turnstile-response']")?.value || "";
-
-    if(!captcha){
-      status.innerText = "❌ Vui lòng tick captcha trước";
-      return;
-    }
 
     const res = await fetch(
       "https://website-kiemtien.onrender.com/get-code?userId="
-      + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captcha
+      + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captchaToken
     );
 
     const data = await res.json();
