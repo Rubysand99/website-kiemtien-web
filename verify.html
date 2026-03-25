@@ -1,34 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Verify</title>
+  <title>Verify</title>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
+<body>
 
-<body style="background:black;color:white;text-align:center;padding-top:100px;">
+<h2>Nhận Code</h2>
 
-<h2 id="text">Đang kiểm tra...</h2>
+<div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
+
+<button onclick="getCode()">Lấy Code</button>
+
+<p id="status"></p>
 
 <script>
+function getCode(){
+  const userId = localStorage.getItem("user") || "guest";
 
-let token = localStorage.getItem("verify_token");
+  const fp = btoa(navigator.userAgent + screen.width + screen.height);
+  const token = localStorage.getItem("token") || "";
 
-if(!token){
-  document.getElementById("text").innerText = "❌ Bạn chưa vượt link!";
-}else{
+  const captcha = document.querySelector("[name='cf-turnstile-response']").value;
 
-  fetch("https://website-kiemtien.onrender.com/verify", {
-    method: "POST"
-  })
-  .then(res=>res.text())
-  .then(code=>{
-    document.getElementById("text").innerText = "🎁 Code: " + code;
+  fetch("https://website-kiemtien.onrender.com/get-code?userId="
+    + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captcha)
+  .then(res=>res.json())
+  .then(data=>{
 
-    localStorage.removeItem("verify_token");
+    if(data.token){
+      localStorage.setItem("token", data.token);
+    }
+
+    const status = document.getElementById("status");
+
+    if(data.status === "ok"){
+      status.innerText = "🎁 Code: " + data.code;
+    }
+    else if(data.status === "limit"){
+      status.innerText = "🚫 Hết lượt hôm nay";
+    }
+    else if(data.status === "cooldown"){
+      status.innerText = "⏱️ Đợi 15s";
+    }
+    else if(data.status === "vpn_block"){
+      status.innerText = "🚫 Không dùng VPN";
+    }
+    else if(data.status === "multi_detect"){
+      status.innerText = "🚫 Nhiều acc cùng IP";
+    }
+    else if(data.status === "device_limit"){
+      status.innerText = "🚫 Thiết bị dùng quá nhiều";
+    }
+    else if(data.status === "captcha_fail"){
+      status.innerText = "❌ Lỗi captcha";
+    }
+    else if(data.status === "spam"){
+      status.innerText = "🚫 Spam quá nhanh";
+    }
   });
-
 }
-
 </script>
 
 </body>
