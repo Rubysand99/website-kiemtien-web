@@ -18,20 +18,14 @@
     button {
       padding: 10px 20px;
       font-size: 18px;
-      border: none;
       border-radius: 8px;
       background: #22c55e;
       color: white;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #16a34a;
-    }
-
     #status {
       margin-top: 20px;
-      font-size: 18px;
     }
   </style>
 </head>
@@ -59,9 +53,8 @@ function onCaptchaSuccess(token){
   captchaToken = token;
 }
 
-// tạo userId riêng cho mỗi người
+// userId riêng
 let userId = localStorage.getItem("user");
-
 if(!userId){
   userId = "user_" + Math.random().toString(36).substring(2);
   localStorage.setItem("user", userId);
@@ -70,8 +63,6 @@ if(!userId){
 async function getCode(){
 
   const status = document.getElementById("status");
-
-  const fp = btoa(navigator.userAgent + screen.width + screen.height);
   const token = localStorage.getItem("token") || "";
 
   if(!captchaToken){
@@ -85,7 +76,7 @@ async function getCode(){
 
     const res = await fetch(
       "https://website-kiemtien.onrender.com/get-code?userId="
-      + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captchaToken
+      + userId + "&token=" + token + "&captcha=" + captchaToken
     );
 
     const data = await res.json();
@@ -104,13 +95,10 @@ async function getCode(){
       status.innerText = "⏱️ Đợi 15 giây";
     }
     else if(data.status === "multi_detect"){
-      status.innerText = "🚫 Quá nhiều tài khoản cùng IP";
+      status.innerText = "🚫 Quá nhiều IP";
     }
     else if(data.status === "captcha_fail"){
-      status.innerText = "❌ Captcha không hợp lệ";
-    }
-    else if(data.status === "device_changed"){
-      status.innerText = "🚫 Thiết bị không hợp lệ";
+      status.innerText = "❌ Captcha sai";
     }
     else{
       status.innerText = "❌ Lỗi server";
@@ -118,7 +106,6 @@ async function getCode(){
 
   } catch (err) {
     status.innerText = "❌ Không kết nối được server";
-    console.error(err);
   }
 }
 </script>
