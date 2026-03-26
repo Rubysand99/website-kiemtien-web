@@ -72,7 +72,11 @@ if (!userId) {
   userId = "user_" + Math.random().toString(36).substring(2);
   localStorage.setItem("user", userId);
 }
-  const fp = btoa(navigator.userAgent + screen.width + screen.height);
+  const fp = localStorage.getItem("fp") || (() => {
+  const f = btoa(navigator.userAgent);
+  localStorage.setItem("fp", f);
+  return f;
+})();
   const token = localStorage.getItem("token") || "";
 
   // nếu captcha chưa sẵn sàng
