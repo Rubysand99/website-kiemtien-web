@@ -1,68 +1,24 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title>Nhận Code</title>
-
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 50px;
-      background: #0f172a;
-      color: white;
-    }
-
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      border-radius: 8px;
-      background: #22c55e;
-      color: white;
-      cursor: pointer;
-    }
-
-    #status {
-      margin-top: 20px;
-    }
-  </style>
-</head>
-
-<body>
-
-<h1>🎁 Nhận Code</h1>
-
-<div class="cf-turnstile"
-     data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"
-     data-callback="onCaptchaSuccess">
-</div>
-
-<br><br>
-
-<button onclick="getCode()">Lấy Code</button>
-
-<p id="status"></p>
-
 <script>
 let captchaToken = "";
 
-// captcha callback
+// nhận captcha
 function onCaptchaSuccess(token){
   captchaToken = token;
-}
-
-// userId riêng
-let userId = localStorage.getItem("user");
-if(!userId){
-  userId = "user_" + Math.random().toString(36).substring(2);
-  localStorage.setItem("user", userId);
 }
 
 async function getCode(){
 
   const status = document.getElementById("status");
+
+  // FIX userId (QUAN TRỌNG)
+  let userId = localStorage.getItem("user");
+
+  if (!userId) {
+    userId = "user_" + Math.random().toString(36).substring(2, 12);
+    localStorage.setItem("user", userId);
+  }
+
+  const fp = btoa(navigator.userAgent + screen.width + screen.height);
   const token = localStorage.getItem("token") || "";
 
   if(!captchaToken){
@@ -76,7 +32,7 @@ async function getCode(){
 
     const res = await fetch(
       "https://website-kiemtien.onrender.com/get-code?userId="
-      + userId + "&token=" + token + "&captcha=" + captchaToken
+      + userId + "&token=" + token + "&fp=" + fp + "&captcha=" + captchaToken
     );
 
     const data = await res.json();
@@ -88,27 +44,12 @@ async function getCode(){
     if(data.status === "ok"){
       status.innerText = "🎁 Code: " + data.code;
     }
-    else if(data.status === "limit"){
-      status.innerText = "🚫 Hết lượt hôm nay";
-    }
-    else if(data.status === "cooldown"){
-      status.innerText = "⏱️ Đợi 15 giây";
-    }
-    else if(data.status === "multi_detect"){
-      status.innerText = "🚫 Quá nhiều IP";
-    }
-    else if(data.status === "captcha_fail"){
-      status.innerText = "❌ Captcha sai";
-    }
     else{
-      status.innerText = "❌ Lỗi server";
+      status.innerText = "❌ " + data.status;
     }
 
   } catch (err) {
-    status.innerText = "❌ Không kết nối được server";
+    status.innerText = "❌ Lỗi kết nối";
   }
 }
 </script>
-
-</body>
-</html>
