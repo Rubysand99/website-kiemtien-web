@@ -41,7 +41,7 @@
 
 <h1>🎁 Nhận Code</h1>
 
-<!-- CAPTCHA AUTO -->
+<!-- CAPTCHA -->
 <div class="cf-turnstile"
      data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"
      data-callback="onCaptchaSuccess">
@@ -56,30 +56,33 @@
 <script>
 let captchaToken = "";
 
-// nhận token tự động từ captcha
+// ================= CAPTCHA =================
 function onCaptchaSuccess(token){
   captchaToken = token;
 }
 
-// lấy code
-async function getCode(){
-
-  const status = document.getElementById("status");
-
-  let userId = localStorage.getItem("user");
+// ================= USER ID (FIX LỖI CHÍNH) =================
+let userId = localStorage.getItem("user");
 
 if (!userId) {
   userId = "user_" + Math.random().toString(36).substring(2);
   localStorage.setItem("user", userId);
 }
-  const fp = localStorage.getItem("fp") || (() => {
-  const f = btoa(navigator.userAgent);
-  localStorage.setItem("fp", f);
-  return f;
-})();
+
+// ================= FINGERPRINT (ỔN ĐỊNH) =================
+let fp = localStorage.getItem("fp");
+
+if (!fp) {
+  fp = btoa(navigator.userAgent);
+  localStorage.setItem("fp", fp);
+}
+
+// ================= GET CODE =================
+async function getCode(){
+
+  const status = document.getElementById("status");
   const token = localStorage.getItem("token") || "";
 
-  // nếu captcha chưa sẵn sàng
   if(!captchaToken){
     status.innerText = "⏳ Đang xác minh captcha...";
     return;
@@ -96,10 +99,15 @@ if (!userId) {
 
     const data = await res.json();
 
+    // lưu token
     if(data.token){
       localStorage.setItem("token", data.token);
     }
 
+    // reset captcha sau khi dùng
+    captchaToken = "";
+
+    // ================= STATUS =================
     if(data.status === "ok"){
       status.innerText = "🎁 Code: " + data.code;
     }
@@ -109,20 +117,11 @@ if (!userId) {
     else if(data.status === "cooldown"){
       status.innerText = "⏱️ Đợi 15 giây";
     }
-    else if(data.status === "vpn_block"){
-      status.innerText = "🚫 Không dùng VPN";
-    }
     else if(data.status === "multi_detect"){
       status.innerText = "🚫 Quá nhiều tài khoản cùng IP";
     }
-    else if(data.status === "device_limit"){
-      status.innerText = "🚫 Thiết bị dùng quá nhiều tài khoản";
-    }
     else if(data.status === "captcha_fail"){
       status.innerText = "❌ Captcha không hợp lệ";
-    }
-    else if(data.status === "spam"){
-      status.innerText = "🚫 Bạn đang spam quá nhanh";
     }
     else if(data.status === "device_changed"){
       status.innerText = "🚫 Thiết bị không hợp lệ";
