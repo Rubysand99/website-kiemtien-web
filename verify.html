@@ -66,7 +66,12 @@ async function getCode(){
 
   const status = document.getElementById("status");
 
-  const userId = localStorage.getItem("user") || "guest";
+  let userId = localStorage.getItem("user");
+
+if (!userId) {
+  userId = "user_" + Math.random().toString(36).substring(2);
+  localStorage.setItem("user", userId);
+}
   const fp = btoa(navigator.userAgent + screen.width + screen.height);
   const token = localStorage.getItem("token") || "";
 
