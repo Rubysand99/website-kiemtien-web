@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Nhận Code</title>
 
-  <!-- Cloudflare Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
   <style>
@@ -41,7 +40,6 @@
 
 <h1>🎁 Nhận Code</h1>
 
-<!-- CAPTCHA -->
 <div class="cf-turnstile"
      data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"
      data-callback="onCaptchaSuccess">
@@ -56,31 +54,24 @@
 <script>
 let captchaToken = "";
 
-// ================= CAPTCHA =================
+// captcha callback
 function onCaptchaSuccess(token){
   captchaToken = token;
 }
 
-// ================= USER ID (FIX LỖI CHÍNH) =================
+// tạo userId riêng cho mỗi người
 let userId = localStorage.getItem("user");
 
-if (!userId) {
+if(!userId){
   userId = "user_" + Math.random().toString(36).substring(2);
   localStorage.setItem("user", userId);
 }
 
-// ================= FINGERPRINT (ỔN ĐỊNH) =================
-let fp = localStorage.getItem("fp");
-
-if (!fp) {
-  fp = btoa(navigator.userAgent);
-  localStorage.setItem("fp", fp);
-}
-
-// ================= GET CODE =================
 async function getCode(){
 
   const status = document.getElementById("status");
+
+  const fp = btoa(navigator.userAgent + screen.width + screen.height);
   const token = localStorage.getItem("token") || "";
 
   if(!captchaToken){
@@ -99,15 +90,10 @@ async function getCode(){
 
     const data = await res.json();
 
-    // lưu token
     if(data.token){
       localStorage.setItem("token", data.token);
     }
 
-    // reset captcha sau khi dùng
-    captchaToken = "";
-
-    // ================= STATUS =================
     if(data.status === "ok"){
       status.innerText = "🎁 Code: " + data.code;
     }
