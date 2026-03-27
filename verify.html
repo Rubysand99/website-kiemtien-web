@@ -84,6 +84,9 @@ async function getCode(){
     else if(data.status === "captcha_fail"){
       status.innerText = "❌ Captcha sai";
     }
+    else if(data.status === "vpn_blocked"){
+      status.innerText = "🚫 Không dùng VPN";
+    }
     else{
       status.innerText = "❌ Lỗi server";
     }
