@@ -3,27 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <title>Kiếm Point</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#0f172a,#020617);
+  color:white;
+  text-align:center;
+}
+
+.container{
+  max-width:500px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:#111827;
+  padding:20px;
+  border-radius:16px;
+  margin-top:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+button{
+  width:100%;
+  padding:15px;
+  font-size:16px;
+  border:none;
+  border-radius:12px;
+  margin-top:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.btn1{ background:#3b82f6; }
+.btn2{ background:#22c55e; }
+
+button:hover{
+  transform:scale(1.05);
+}
+
+.rules{
+  text-align:left;
+  font-size:14px;
+  line-height:1.6;
+  opacity:0.9;
+}
+
+.footer{
+  margin-top:20px;
+  opacity:0.6;
+}
+</style>
+
 </head>
 
-<body style="text-align:center; background:#0f172a; color:white;">
+<body>
+
+<div class="container">
 
 <h1>💰 Kiếm Point</h1>
 
-<button onclick="go('linkvertise')">
+<div class="card">
+<button class="btn1" onclick="go('linkvertise')">
 🔗 Linkvertise (1 point/lần)
 </button>
 
-<br><br>
-
-<button onclick="go('funklink')">
+<button class="btn2" onclick="go('funklink')">
 💎 Funklink (2 point/lần)
 </button>
+</div>
 
-<hr style="margin:30px;">
+<div class="card">
+<h3>📜 Điều khoản</h3>
 
-<h3>cần tuân thủ các điều khoản dưới đây khi vượt link nếu không muốn bị chặn ip</h3>
-
-<p>
+<div class="rules">
 ❌ Không sử dụng VPN / Proxy<br>
 ❌ Không spam vượt link nhiều lần liên tục<br>
 ❌ Không dùng tool auto / bot<br>
@@ -31,18 +87,24 @@
 
 ✅ Mỗi link chỉ được vượt 3 lần/ngày<br>
 ⏱ Mỗi lần phải chờ 60 giây<br>
-🎯 Phải hoàn thành đầy đủ quảng cáo<br>
-</p>
+🎯 Phải hoàn thành đầy đủ quảng cáo
+</div>
+</div>
 
-<hr style="margin:30px;">
+<div class="footer">
+👑 Created by <b>rubynek209</b>
+</div>
 
-<p style="opacity:0.6;">
- Created by <b>rubynek209</b>
-</p>
-  
+</div>
+
 <script>
 function go(type){
+
+  // lưu loại link
   localStorage.setItem("type", type);
+
+  // ===== ANTI F5 =====
+  localStorage.setItem("pass", Date.now());
 
   if(type === "funklink"){
     window.location.href = "https://funklink.io/YOUR_LINK";
