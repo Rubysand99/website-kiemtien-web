@@ -1,27 +1,25 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Nhận Code</title>
+<meta charset="UTF-8">
+<title>Nhận Code</title>
 
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 50px;
-      background: #0f172a;
-      color: white;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      border-radius: 8px;
-      background: #22c55e;
-      color: white;
-    }
-  </style>
+<style>
+body { text-align:center; background:#0f172a; color:white; }
+.loader {
+  border: 4px solid #1e293b;
+  border-top: 4px solid #22c55e;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin:auto;
+}
+@keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+
 </head>
 
 <body>
@@ -29,70 +27,78 @@
 <h1>🎁 Nhận Code</h1>
 
 <div class="cf-turnstile"
-     data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"
-     data-callback="onCaptchaSuccess">
-</div>
+data-sitekey="0x4AAAAAACvsKfOXK7saRFTH"
+data-callback="ok"></div>
 
-<br><br>
+<br>
 
 <button onclick="getCode()">Lấy Code</button>
+
+<div id="load" style="display:none;"><div class="loader"></div></div>
 
 <p id="status"></p>
 
 <script>
-let captchaToken = "";
+let captcha = "";
 
-function onCaptchaSuccess(token){
-  captchaToken = token;
-}
+function ok(t){ captcha = t; }
 
-// tạo userId cố định
 if(!localStorage.getItem("user")){
-  localStorage.setItem("user", "user_" + Math.random().toString(36).substring(2));
+  localStorage.setItem("user", "user_"+Math.random());
 }
 
+// ===== ANTI F5 =====
+const now = Date.now();
+const pass = localStorage.getItem("pass");
+
+if(!pass){
+  window.location.href = "index.html";
+}
+
+if(now - pass > 5*60*1000){
+  localStorage.removeItem("pass");
+  location.reload();
+}
+
+// ===== GET CODE =====
 async function getCode(){
+
   const status = document.getElementById("status");
+  const load = document.getElementById("load");
 
-  const userId = localStorage.getItem("user");
-  const fp = btoa(navigator.userAgent); // đơn giản hóa
-
-  if(!captchaToken){
-    status.innerText = "⏳ Chờ captcha...";
+  if(!captcha){
+    status.innerText = "⏳ Chờ captcha";
     return;
   }
 
-  status.innerText = "⏳ Đang xử lý...";
+  load.style.display="block";
 
-  try {
+  const user = localStorage.getItem("user");
+  const type = localStorage.getItem("type") || "linkvertise";
 
-    const res = await fetch(
-      `https://website-kiemtien.onrender.com/get-code?userId=${userId}&fp=${fp}&captcha=${captchaToken}`
-    );
+  const res = await fetch(
+    `https://website-kiemtien.onrender.com/get-code?userId=${user}&captcha=${captcha}&type=${type}`
+  );
 
-    const data = await res.json();
+  const data = await res.json();
 
-    if(data.status === "ok"){
-      status.innerText = "🎁 Code: " + data.code;
-    }
-    else if(data.status === "limit"){
-      status.innerText = "🚫 Hết lượt";
-    }
-    else if(data.status === "cooldown"){
-      status.innerText = "⏱️ Đợi 15s";
-    }
-    else if(data.status === "captcha_fail"){
-      status.innerText = "❌ Captcha sai";
-    }
-    else if(data.status === "vpn_blocked"){
-      status.innerText = "🚫 Không dùng VPN";
-    }
-    else{
-      status.innerText = "❌ Lỗi server";
-    }
+  load.style.display="none";
 
-  } catch {
-    status.innerText = "❌ Không kết nối";
+  if(data.status === "ok"){
+    navigator.clipboard.writeText(data.code);
+    status.innerText = `🎁 ${data.code} (+${data.reward} point)`;
+  }
+  else if(data.status === "limit"){
+    status.innerText = "🚫 Hết lượt hôm nay";
+  }
+  else if(data.status === "cooldown"){
+    status.innerText = "⏱️ Đợi 60s";
+  }
+  else if(data.status === "vpn_blocked"){
+    status.innerText = "🚫 Không dùng VPN";
+  }
+  else{
+    status.innerText = "❌ Lỗi";
   }
 }
 </script>
