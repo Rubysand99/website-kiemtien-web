@@ -2,41 +2,34 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>EarnPoint</title>
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  color:white;
-  text-align:center;
-}
-.container{padding-top:120px;}
-button{
-  padding:15px 30px;
-  background:#00ff99;
-  border:none;
-  border-radius:10px;
-  font-size:18px;
-}
-</style>
+<title>Kiếm Point</title>
 </head>
 
-<body>
-<div class="container">
-  <h1>🎮 EarnPoint</h1>
-  <p>Vượt link để nhận code</p>
+<body style="text-align:center; background:#0f172a; color:white;">
 
-  <button onclick="goLink()">BẮT ĐẦU</button>
-</div>
+<h1>💰 Kiếm Point</h1>
+
+<button onclick="go('linkvertise')">
+🔗 Linkvertise (1 point/lần)
+</button>
+
+<br><br>
+
+<button onclick="go('funklink')">
+💎 Funklink (2 point/lần)
+</button>
 
 <script>
-function goLink(){
-  let token = Math.random().toString(36);
-  localStorage.setItem("verify_token", token);
+function go(type){
+  localStorage.setItem("type", type);
 
-  window.location.href = "https://link-target.net/1359000/VoDwwubZO94C";
+  if(type === "funklink"){
+    window.location.href = "https://funklink.io/YOUR_LINK";
+  } else {
+    window.location.href = "https://linkvertise.com/YOUR_LINK";
+  }
 }
 </script>
+
 </body>
 </html>
