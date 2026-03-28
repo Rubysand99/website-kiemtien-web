@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Kiếm Point</title>
+<title>EarnPoint</title>
 
 <style>
 body {
@@ -12,120 +12,72 @@ body {
   font-family: Arial;
 }
 
-button {
-  padding: 12px 20px;
-  font-size: 18px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.btn1 { background:#3b82f6; }
-.btn2 { background:#22c55e; }
-
-.card {
-  background:#1e293b;
-  padding:20px;
-  border-radius:12px;
-  display:inline-block;
+button{
+  padding:12px 20px;
+  margin:10px;
+  border-radius:10px;
+  border:none;
+  background:#22c55e;
+  color:white;
+  font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
-<h1>💰 Kiếm Point</h1>
+<h1>💰 EarnPoint</h1>
 
-<button class="btn1" onclick="go('linkvertise')">
-🔗 Linkvertise (1 point/lần)
-</button>
+<h3 id="streak">🔥 Streak: 0</h3>
+<p id="status"></p>
 
-<br><br>
+<button onclick="daily()">🎁 Điểm danh</button>
 
-<button class="btn2" onclick="go('funklink')">
-💎 Funklink (2 point/lần)
-</button>
+<hr>
 
-<hr style="margin:30px;">
+<button onclick="go()">🔗 Vượt Link (1 point)</button>
 
-<h3>📜 Quy định</h3>
+<hr>
 
 <p>
-❌ Không dùng VPN / Proxy<br>
-❌ Không spam / auto tool<br>
-❌ Không reload spam (F5)<br><br>
-
-✅ 3 lần / ngày / link<br>
-⏱ 60s mỗi lần<br>
-🎯 Phải hoàn thành quảng cáo
+❌ Không VPN<br>
+⏱ 60s cooldown<br>
+🎯 3 lần/ngày
 </p>
 
-<hr style="margin:30px;">
-
-<p style="opacity:0.6;">
+<p style="opacity:0.6">
 Created by <b>rubynek209</b>
 </p>
 
-</div>
-
 <script>
+function go(){
+  const links = [
+    "https://link-hub.net/1359000/ChMZK0YdY8qY",
+    "https://direct-link.net/1359000/2jbBbud5kM1U",
+    "https://lootdest.org/s?eCkVFdSB"
+  ];
 
-// ================= LINK LIST =================
-
-// 🔗 Linkvertise list
-const linkvertiseLinks = [
-  "https://linkvertise.com/abc1",
-  "https://linkvertise.com/abc2",
-  "https://linkvertise.com/abc3",
-  "https://linkvertise.com/abc4"
-];
-
-// 💎 Funklink list
-const funklinkLinks = [
-  "https://funklink.io/xyz1",
-  "https://funklink.io/xyz2"
-];
-
-// ================= RANDOM FUNCTION =================
-
-function getRandom(list){
-  return list[Math.floor(Math.random() * list.length)];
+  const random = links[Math.floor(Math.random()*links.length)];
+  window.location.href = random;
 }
 
-// ================= ANTI SPAM =================
+async function daily(){
 
-function canGo(){
-  let last = localStorage.getItem("lastTime");
+  const status = document.getElementById("status");
 
-  if(!last) return true;
+  status.innerText = "⏳ Đang xử lý...";
 
-  let now = Date.now();
+  const res = await fetch("https://website-kiemtien.onrender.com/daily");
+  const data = await res.json();
 
-  if(now - last < 60000){
-    alert("⏱ Vui lòng đợi 60 giây");
-    return false;
+  if(data.status === "ok"){
+    status.innerText = `+${data.reward} point`;
+    document.getElementById("streak").innerText = "🔥 Streak: " + data.streak;
   }
-
-  localStorage.setItem("lastTime", now);
-  return true;
-}
-
-// ================= MAIN =================
-
-function go(type){
-
-  if(!canGo()) return;
-
-  localStorage.setItem("type", type);
-
-  if(type === "funklink"){
-    window.location.href = getRandom(funklinkLinks);
-  } else {
-    window.location.href = getRandom(linkvertiseLinks);
+  else{
+    status.innerText = "⏱️ Đã nhận hôm nay";
   }
 }
-
 </script>
 
 </body>
