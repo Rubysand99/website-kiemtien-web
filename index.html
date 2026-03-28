@@ -5,113 +5,127 @@
 <title>Kiếm Point</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#0f172a,#020617);
-  color:white;
+body {
   text-align:center;
+  background:#0f172a;
+  color:white;
+  font-family: Arial;
 }
 
-.container{
-  max-width:500px;
-  margin:auto;
+button {
+  padding: 12px 20px;
+  font-size: 18px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn1 { background:#3b82f6; }
+.btn2 { background:#22c55e; }
+
+.card {
+  background:#1e293b;
   padding:20px;
-}
-
-.card{
-  background:#111827;
-  padding:20px;
-  border-radius:16px;
-  margin-top:20px;
-  box-shadow:0 0 20px rgba(0,0,0,0.5);
-}
-
-button{
-  width:100%;
-  padding:15px;
-  font-size:16px;
-  border:none;
   border-radius:12px;
-  margin-top:10px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.btn1{ background:#3b82f6; }
-.btn2{ background:#22c55e; }
-
-button:hover{
-  transform:scale(1.05);
-}
-
-.rules{
-  text-align:left;
-  font-size:14px;
-  line-height:1.6;
-  opacity:0.9;
-}
-
-.footer{
-  margin-top:20px;
-  opacity:0.6;
+  display:inline-block;
 }
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
-
+<div class="card">
 <h1>💰 Kiếm Point</h1>
 
-<div class="card">
 <button class="btn1" onclick="go('linkvertise')">
 🔗 Linkvertise (1 point/lần)
 </button>
 
-<button class="btn2" onclick="go('Loot Labs')">
-💎 Loot Labs (2 point/lần)
+<br><br>
+
+<button class="btn2" onclick="go('funklink')">
+💎 Funklink (2 point/lần)
 </button>
-</div>
 
-<div class="card">
-<h3>📜 Điều khoản</h3>
+<hr style="margin:30px;">
 
-<div class="rules">
-❌ Không sử dụng VPN / Proxy<br>
-❌ Không spam vượt link nhiều lần liên tục<br>
-❌ Không dùng tool auto / bot<br>
-❌ Không chỉnh sửa trình duyệt<br><br>
+<h3>📜 Quy định</h3>
 
-✅ Mỗi link chỉ được vượt 3 lần/ngày<br>
-⏱ Mỗi lần phải chờ 60 giây<br>
-🎯 Phải hoàn thành đầy đủ quảng cáo
-</div>
-</div>
+<p>
+❌ Không dùng VPN / Proxy<br>
+❌ Không spam / auto tool<br>
+❌ Không reload spam (F5)<br><br>
 
-<div class="footer">
-👑 Created by <b>rubynek209</b>
-</div>
+✅ 3 lần / ngày / link<br>
+⏱ 60s mỗi lần<br>
+🎯 Phải hoàn thành quảng cáo
+</p>
+
+<hr style="margin:30px;">
+
+<p style="opacity:0.6;">
+Created by <b>rubynek209</b>
+</p>
 
 </div>
 
 <script>
+
+// ================= LINK LIST =================
+
+// 🔗 Linkvertise list
+const linkvertiseLinks = [
+  "https://linkvertise.com/abc1",
+  "https://linkvertise.com/abc2",
+  "https://linkvertise.com/abc3",
+  "https://linkvertise.com/abc4"
+];
+
+// 💎 Funklink list
+const funklinkLinks = [
+  "https://funklink.io/xyz1",
+  "https://funklink.io/xyz2"
+];
+
+// ================= RANDOM FUNCTION =================
+
+function getRandom(list){
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+// ================= ANTI SPAM =================
+
+function canGo(){
+  let last = localStorage.getItem("lastTime");
+
+  if(!last) return true;
+
+  let now = Date.now();
+
+  if(now - last < 60000){
+    alert("⏱ Vui lòng đợi 60 giây");
+    return false;
+  }
+
+  localStorage.setItem("lastTime", now);
+  return true;
+}
+
+// ================= MAIN =================
+
 function go(type){
 
-  // lưu loại link
+  if(!canGo()) return;
+
   localStorage.setItem("type", type);
 
-  // ===== ANTI F5 =====
-  localStorage.setItem("pass", Date.now());
-
-  if(type === "lootlabs"){
-    window.location.href = "https://lootdest.org/s?eCkVFdSB";
+  if(type === "funklink"){
+    window.location.href = getRandom(funklinkLinks);
   } else {
-    window.location.href = "https://link-hub.net/1359000/ChMZK0YdY8qY";
+    window.location.href = getRandom(linkvertiseLinks);
   }
 }
+
 </script>
 
 </body>
