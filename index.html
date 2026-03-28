@@ -11,15 +11,13 @@ body {
   color:white;
   font-family: Arial;
 }
-
 button{
-  padding:12px 20px;
+  padding:12px;
   margin:10px;
   border-radius:10px;
   border:none;
   background:#22c55e;
   color:white;
-  font-size:16px;
 }
 </style>
 </head>
@@ -35,19 +33,7 @@ button{
 
 <hr>
 
-<button onclick="go()">🔗 Vượt Link (1 point)</button>
-
-<hr>
-
-<p>
-❌ Không VPN<br>
-⏱ 60s cooldown<br>
-🎯 3 lần/ngày
-</p>
-
-<p style="opacity:0.6">
-Created by <b>rubynek209</b>
-</p>
+<button onclick="go()">🔗 Vượt Link</button>
 
 <script>
 function go(){
@@ -56,13 +42,10 @@ function go(){
     "https://direct-link.net/1359000/2jbBbud5kM1U",
     "https://lootdest.org/s?eCkVFdSB"
   ];
-
-  const random = links[Math.floor(Math.random()*links.length)];
-  window.location.href = random;
+  window.location.href = links[Math.floor(Math.random()*links.length)];
 }
 
 async function daily(){
-
   const status = document.getElementById("status");
 
   status.innerText = "⏳ Đang xử lý...";
@@ -73,6 +56,9 @@ async function daily(){
   if(data.status === "ok"){
     status.innerText = `+${data.reward} point`;
     document.getElementById("streak").innerText = "🔥 Streak: " + data.streak;
+  }
+  else if(data.status === "vpn_blocked"){
+    status.innerText = "🚫 Không dùng VPN";
   }
   else{
     status.innerText = "⏱️ Đã nhận hôm nay";
