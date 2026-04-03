@@ -4,65 +4,94 @@
 <meta charset="UTF-8">
 <title>EarnPoint</title>
 
+<!-- Minecraft pixel font -->
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin:0;
-  font-family: Arial;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color:white;
+  font-family: 'Press Start 2P', cursive;
+  background: linear-gradient(180deg, #0b1f0b, #020403);
+  color:#a3ff12;
   text-align:center;
+  overflow-x:hidden;
 }
 
-/* animation background */
+/* pixel background animation */
 body::before{
   content:"";
   position:fixed;
-  width:200%;
-  height:200%;
-  background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
-  animation: move 10s linear infinite;
-  opacity:0.1;
+  width:300%;
+  height:300%;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      #0f2a0f 0px,
+      #0f2a0f 10px,
+      #0b1f0b 10px,
+      #0b1f0b 20px
+    );
+  animation: move 15s linear infinite;
+  opacity:0.2;
+  z-index:-1;
 }
 
 @keyframes move{
   0%{transform:translate(0,0)}
-  50%{transform:translate(-50px,-50px)}
-  100%{transform:translate(0,0)}
+  100%{transform:translate(-200px,-200px)}
 }
 
+/* title */
 h1{
-  margin-top:30px;
-  font-size:32px;
+  margin-top:40px;
+  font-size:22px;
+  text-shadow:0 0 10px #39ff14, 0 0 20px #00ff00;
 }
 
 /* button */
 .btn{
-  background:#3b82f6;
-  border:none;
-  padding:15px 25px;
-  margin:10px;
-  border-radius:10px;
-  color:white;
-  font-size:16px;
+  background:#14532d;
+  border:3px solid #22c55e;
+  padding:15px;
+  margin:15px;
+  border-radius:5px;
+  color:#a3ff12;
+  font-size:12px;
   cursor:pointer;
-  transition:0.3s;
+  transition:0.2s;
+  box-shadow:0 0 10px #22c55e;
 }
 
 .btn:hover{
-  background:#2563eb;
-  transform:scale(1.05);
+  background:#166534;
+  transform:scale(1.1);
+  box-shadow:0 0 20px #22c55e, 0 0 40px #22c55e;
 }
 
 /* card */
 .card{
-  background:#1e293b;
+  background:#020403;
   padding:20px;
-  margin:20px auto;
-  width:80%;
-  max-width:400px;
-  border-radius:15px;
-  box-shadow:0 0 20px rgba(0,0,0,0.5);
-  animation: fadeIn 1s ease;
+  margin:25px auto;
+  width:85%;
+  max-width:420px;
+  border:3px solid #22c55e;
+  border-radius:10px;
+  box-shadow:0 0 20px #22c55e;
+  animation: fadeIn 0.8s ease;
+  position:relative;
+}
+
+/* pixel corner effect */
+.card::before{
+  content:"";
+  position:absolute;
+  top:-5px;
+  left:-5px;
+  width:100%;
+  height:100%;
+  border:2px dashed #22c55e;
+  opacity:0.3;
 }
 
 @keyframes fadeIn{
@@ -75,22 +104,40 @@ h1{
   position:fixed;
   bottom:20px;
   right:20px;
-  background:#111827;
+  background:#020403;
   padding:15px;
-  border-radius:10px;
-  box-shadow:0 0 10px black;
+  border:2px solid #22c55e;
+  border-radius:5px;
+  box-shadow:0 0 10px #22c55e;
   display:none;
+  font-size:10px;
 }
 
+/* footer */
+footer{
+  margin-top:20px;
+  opacity:0.6;
+  font-size:10px;
+}
+
+/* glowing text animation */
+.glow{
+  animation: glow 1.5s infinite alternate;
+}
+
+@keyframes glow{
+  from{ text-shadow:0 0 5px #22c55e; }
+  to{ text-shadow:0 0 20px #00ff00; }
+}
 </style>
 </head>
 
 <body>
 
-<h1>💰 EarnPoint</h1>
+<h1 class="glow">⛏️ EarnPoint</h1>
 
 <div class="card">
-  <h2>Kiếm Point</h2>
+  <h2>⚡ Kiếm Point</h2>
 
   <button class="btn" onclick="go()">
     🔗 Linkvertise (1 point/lần)
@@ -98,7 +145,7 @@ h1{
 </div>
 
 <div class="card">
-  <h3>⚠️ Luật</h3>
+  <h3>📜 Luật</h3>
   <p>
     ❌ Không dùng VPN / Proxy<br>
     ❌ Không spam<br>
@@ -109,10 +156,12 @@ h1{
   </p>
 </div>
 
-<p style="opacity:0.6;">Created by <b>rubynek209</b></p>
+<footer>
+  Created by <b>rubynek209</b>
+</footer>
 
 <div class="popup" id="popup">
-  💸 Mẹo: Vượt đủ 3 lần mỗi ngày để tối đa point!
+  💸 Tip: Farm đủ 3 lần/ngày để max point!
 </div>
 
 <script>
