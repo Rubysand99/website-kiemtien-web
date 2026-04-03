@@ -6,19 +6,82 @@
 
 <style>
 body {
-  text-align:center;
-  background:#0f172a;
-  color:white;
+  margin:0;
   font-family: Arial;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color:white;
+  text-align:center;
 }
-button{
-  padding:12px;
+
+/* animation background */
+body::before{
+  content:"";
+  position:fixed;
+  width:200%;
+  height:200%;
+  background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+  animation: move 10s linear infinite;
+  opacity:0.1;
+}
+
+@keyframes move{
+  0%{transform:translate(0,0)}
+  50%{transform:translate(-50px,-50px)}
+  100%{transform:translate(0,0)}
+}
+
+h1{
+  margin-top:30px;
+  font-size:32px;
+}
+
+/* button */
+.btn{
+  background:#3b82f6;
+  border:none;
+  padding:15px 25px;
   margin:10px;
   border-radius:10px;
-  border:none;
-  background:#22c55e;
   color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
 }
+
+.btn:hover{
+  background:#2563eb;
+  transform:scale(1.05);
+}
+
+/* card */
+.card{
+  background:#1e293b;
+  padding:20px;
+  margin:20px auto;
+  width:80%;
+  max-width:400px;
+  border-radius:15px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* popup */
+.popup{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#111827;
+  padding:15px;
+  border-radius:10px;
+  box-shadow:0 0 10px black;
+  display:none;
+}
+
 </style>
 </head>
 
@@ -26,44 +89,56 @@ button{
 
 <h1>💰 EarnPoint</h1>
 
-<h3 id="streak">🔥 Streak: 0</h3>
-<p id="status"></p>
+<div class="card">
+  <h2>Kiếm Point</h2>
 
-<button onclick="daily()">🎁 Điểm danh</button>
+  <button class="btn" onclick="go()">
+    🔗 Linkvertise (1 point/lần)
+  </button>
+</div>
 
-<hr>
+<div class="card">
+  <h3>⚠️ Luật</h3>
+  <p>
+    ❌ Không dùng VPN / Proxy<br>
+    ❌ Không spam<br>
+    ❌ Không dùng tool auto<br><br>
 
-<button onclick="go()">🔗 Vượt Link</button>
+    ✅ 1 ngày tối đa 3 lần / link<br>
+    ⏱ Chờ 60 giây mỗi lần
+  </p>
+</div>
+
+<p style="opacity:0.6;">Created by <b>rubynek209</b></p>
+
+<div class="popup" id="popup">
+  💸 Mẹo: Vượt đủ 3 lần mỗi ngày để tối đa point!
+</div>
 
 <script>
+// random link
+const links = [
+  "https://link-hub.net/1359000/ChMZK0YdY8qY",
+  "https://direct-link.net/1359000/2jbBbud5kM1U",
+  "https://lootdest.org/s?eCkVFdSB"
+];
+
 function go(){
-  const links = [
-    "https://link-hub.net/1359000/ChMZK0YdY8qY",
-    "https://direct-link.net/1359000/2jbBbud5kM1U",
-    "https://lootdest.org/s?eCkVFdSB"
-  ];
-  window.location.href = links[Math.floor(Math.random()*links.length)];
+  let link = links[Math.floor(Math.random()*links.length)];
+  window.location.href = link;
 }
 
-async function daily(){
-  const status = document.getElementById("status");
+// popup random
+setTimeout(()=>{
+  document.getElementById("popup").style.display="block";
+},3000);
 
-  status.innerText = "⏳ Đang xử lý...";
-
-  const res = await fetch("https://website-kiemtien.onrender.com/daily");
-  const data = await res.json();
-
-  if(data.status === "ok"){
-    status.innerText = `+${data.reward} point`;
-    document.getElementById("streak").innerText = "🔥 Streak: " + data.streak;
-  }
-  else if(data.status === "vpn_blocked"){
-    status.innerText = "🚫 Không dùng VPN";
-  }
-  else{
-    status.innerText = "⏱️ Đã nhận hôm nay";
-  }
+// anti F5 spam
+if(localStorage.getItem("last") && Date.now() - localStorage.getItem("last") < 3000){
+  alert("🚫 Đừng spam reload");
 }
+localStorage.setItem("last", Date.now());
+
 </script>
 
 </body>
