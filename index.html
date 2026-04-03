@@ -4,48 +4,95 @@
 <meta charset="UTF-8">
 <title>EarnPoint</title>
 
-<!-- Minecraft pixel font -->
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
 body {
   margin:0;
   font-family: 'Press Start 2P', cursive;
-  background: linear-gradient(180deg, #0b1f0b, #020403);
   color:#a3ff12;
   text-align:center;
-  overflow-x:hidden;
+  overflow:hidden;
 }
 
-/* pixel background animation */
+/* SKY background */
 body::before{
   content:"";
   position:fixed;
+  width:100%;
+  height:100%;
+  background: linear-gradient(#87CEEB, #4facfe);
+  z-index:-3;
+}
+
+/* moving clouds (Minecraft style) */
+body::after{
+  content:"";
+  position:fixed;
   width:300%;
-  height:300%;
+  height:100%;
   background:
     repeating-linear-gradient(
-      45deg,
-      #0f2a0f 0px,
-      #0f2a0f 10px,
-      #0b1f0b 10px,
-      #0b1f0b 20px
+      0deg,
+      transparent 0px,
+      transparent 40px,
+      rgba(255,255,255,0.2) 40px,
+      rgba(255,255,255,0.2) 60px
     );
-  animation: move 15s linear infinite;
-  opacity:0.2;
+  animation: cloudMove 60s linear infinite;
+  z-index:-2;
+}
+
+@keyframes cloudMove{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+/* floating blocks */
+.blocks{
+  position:fixed;
+  width:100%;
+  height:100%;
   z-index:-1;
 }
 
-@keyframes move{
-  0%{transform:translate(0,0)}
-  100%{transform:translate(-200px,-200px)}
+.block{
+  position:absolute;
+  width:40px;
+  height:40px;
+  background:#3b3b3b;
+  border:3px solid #22c55e;
+  box-shadow:0 0 10px #22c55e;
+  animation: float 6s infinite ease-in-out;
+}
+
+.block:nth-child(1){ top:20%; left:10%; animation-delay:0s;}
+.block:nth-child(2){ top:50%; left:80%; animation-delay:2s;}
+.block:nth-child(3){ top:70%; left:30%; animation-delay:4s;}
+
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-20px)}
+  100%{transform:translateY(0)}
 }
 
 /* title */
 h1{
   margin-top:40px;
-  font-size:22px;
-  text-shadow:0 0 10px #39ff14, 0 0 20px #00ff00;
+  font-size:20px;
+  text-shadow:0 0 10px #39ff14;
+}
+
+/* card */
+.card{
+  background:#020403;
+  padding:20px;
+  margin:25px auto;
+  width:85%;
+  max-width:420px;
+  border:3px solid #22c55e;
+  border-radius:10px;
+  box-shadow:0 0 20px #22c55e;
 }
 
 /* button */
@@ -59,44 +106,12 @@ h1{
   font-size:12px;
   cursor:pointer;
   transition:0.2s;
-  box-shadow:0 0 10px #22c55e;
 }
 
 .btn:hover{
   background:#166534;
   transform:scale(1.1);
-  box-shadow:0 0 20px #22c55e, 0 0 40px #22c55e;
-}
-
-/* card */
-.card{
-  background:#020403;
-  padding:20px;
-  margin:25px auto;
-  width:85%;
-  max-width:420px;
-  border:3px solid #22c55e;
-  border-radius:10px;
   box-shadow:0 0 20px #22c55e;
-  animation: fadeIn 0.8s ease;
-  position:relative;
-}
-
-/* pixel corner effect */
-.card::before{
-  content:"";
-  position:absolute;
-  top:-5px;
-  left:-5px;
-  width:100%;
-  height:100%;
-  border:2px dashed #22c55e;
-  opacity:0.3;
-}
-
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(20px)}
-  to{opacity:1; transform:translateY(0)}
 }
 
 /* popup */
@@ -112,29 +127,18 @@ h1{
   display:none;
   font-size:10px;
 }
-
-/* footer */
-footer{
-  margin-top:20px;
-  opacity:0.6;
-  font-size:10px;
-}
-
-/* glowing text animation */
-.glow{
-  animation: glow 1.5s infinite alternate;
-}
-
-@keyframes glow{
-  from{ text-shadow:0 0 5px #22c55e; }
-  to{ text-shadow:0 0 20px #00ff00; }
-}
 </style>
 </head>
 
 <body>
 
-<h1 class="glow">⛏️ EarnPoint</h1>
+<div class="blocks">
+  <div class="block"></div>
+  <div class="block"></div>
+  <div class="block"></div>
+</div>
+
+<h1>⛏️ EarnPoint</h1>
 
 <div class="card">
   <h2>⚡ Kiếm Point</h2>
@@ -156,10 +160,6 @@ footer{
   </p>
 </div>
 
-<footer>
-  Created by <b>rubynek209</b>
-</footer>
-
 <div class="popup" id="popup">
   💸 Tip: Farm đủ 3 lần/ngày để max point!
 </div>
@@ -177,15 +177,12 @@ function go(){
   window.location.href = link;
 }
 
-// popup random
+// popup
 setTimeout(()=>{
   document.getElementById("popup").style.display="block";
 },3000);
 
-// anti F5 spam
-if(localStorage.getItem("last") && Date.now() - localStorage.getItem("last") < 3000){
-  alert("🚫 Đừng spam reload");
-}
+// ❌ đã xoá alert spam reload
 localStorage.setItem("last", Date.now());
 
 </script>
