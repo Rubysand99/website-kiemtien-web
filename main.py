@@ -1,19 +1,25 @@
 """
 main.py — API "Trạng thái Server" cho website TuyTam Community
-Deploy Render. KHÔNG dùng MongoDB nữa — cache toàn bộ trong bộ nhớ (in-memory TTL),
-vì dữ liệu chỉ là số liệu hiển thị real-time, không cần lưu lâu dài.
+Deploy Render.
 
-Cung cấp 2 nguồn dữ liệu cho trang chủ:
+Cung cấp 3 nguồn dữ liệu cho trang chủ:
   1. Discord  — tổng member + đang online, qua Discord Invite API công khai
-                (KHÔNG cần bot token).
+                (KHÔNG cần bot token). Cache in-memory.
   2. DonutSMP — server online/offline + số người chơi hiện tại, qua
                 mcsrvstat.us (ping Minecraft server công khai, KHÔNG cần API key).
+                Cache in-memory.
+  3. Feed     — tin nhắn mới nhất ở kênh thông báo/legit, do bot Rudy ghi vào
+                MongoDB collection "site_feed" (xem core/site_feed.py bên repo bot).
+                Đọc-only ở đây, KHÔNG ghi gì vào Mongo.
 
-Biến môi trường (đều có default, không bắt buộc set trên Render):
-  DISCORD_INVITE_CODE   mã invite Discord, mặc định "FkC45DwtyN"
-                         -> XÁC NHẬN LẠI mã này đúng với discord.gg/... hiện tại
-  DONUTSMP_HOST          địa chỉ server DonutSMP, mặc định "donutsmp.net"
-  CACHE_TTL_SECONDS      thời gian cache mỗi nguồn dữ liệu (giây), mặc định 60
+Biến môi trường:
+  DISCORD_INVITE_CODE   mã invite Discord, mặc định "FkC45DwtyN" (có default, không bắt buộc set)
+  DONUTSMP_HOST          địa chỉ server DonutSMP, mặc định "donutsmp.net" (có default)
+  CACHE_TTL_SECONDS      thời gian cache mỗi nguồn dữ liệu (giây), mặc định 60 (có default)
+  MONGO_URI              connection string Mongo Atlas — BẮT BUỘC set trên Render để mục
+                         Feed hoạt động (dùng CHUNG cụm Mongo với bot). Thiếu biến này thì
+                         /status/discord và /status/donutsmp vẫn chạy bình thường, chỉ
+                         riêng feed trả về rỗng — KHÔNG làm sập cả service.
 """
 
 import asyncio
@@ -24,6 +30,7 @@ from typing import Awaitable, Callable, Optional
 import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from motor.motor_asyncio import AsyncIOMotorClient
 
 # ══════════════════════════════════════════
 # CONFIG
@@ -31,6 +38,8 @@ from fastapi.middleware.cors import CORSMiddleware
 DISCORD_INVITE_CODE = os.getenv("DISCORD_INVITE_CODE", "FkC45DwtyN")
 DONUTSMP_HOST = os.getenv("DONUTSMP_HOST", "donutsmp.net")
 CACHE_TTL = int(os.getenv("CACHE_TTL_SECONDS", "60"))
+MONGO_URI = os.getenv("MONGO_URI")
+FEED_LIMIT = int(os.getenv("FEED_LIMIT", "6"))
 
 # mcsrvstat.us yêu cầu User-Agent không rỗng, thiếu sẽ bị 403
 _UA = f"TuyTamCommunityStatus/1.0 (+https://discord.gg/{DISCORD_INVITE_CODE})"
@@ -93,6 +102,53 @@ async def _fetch_donutsmp() -> dict:
 
 
 # ══════════════════════════════════════════
+# MONGO — chỉ dùng để ĐỌC feed do bot Rudy ghi vào (collection "site_feed").
+# Không set MONGO_URI vẫn chạy được — feed trả rỗng thay vì làm sập cả service.
+# ══════════════════════════════════════════
+_mongo_client: Optional[AsyncIOMotorClient] = None
+
+
+def _get_feed_col():
+    global _mongo_client
+    if not MONGO_URI:
+        return None
+    if _mongo_client is None:
+        _mongo_client = AsyncIOMotorClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    return _mongo_client["tuytam_bot"]["site_feed"]
+
+
+def _serialize_feed_doc(d: dict) -> dict:
+    ts = d.get("timestamp")
+    return {
+        "author_name": d.get("author_name"),
+        "author_avatar": d.get("author_avatar"),
+        "content": d.get("content"),
+        "attachment_url": d.get("attachment_url"),
+        "jump_url": d.get("jump_url"),
+        "timestamp": ts.isoformat() if ts else None,
+    }
+
+
+async def _fetch_feed() -> dict:
+    col = _get_feed_col()
+    if col is None:
+        return {"thongbao": [], "legit": [], "error": "mongo_not_configured"}
+    try:
+        result = {}
+        for label in ("thongbao", "legit"):
+            cursor = (
+                col.find({"channel_label": label})
+                .sort("timestamp", -1)
+                .limit(FEED_LIMIT)
+            )
+            docs = [d async for d in cursor]
+            result[label] = [_serialize_feed_doc(d) for d in docs]
+        return result
+    except Exception as e:
+        return {"thongbao": [], "legit": [], "error": str(e)}
+
+
+# ══════════════════════════════════════════
 # APP
 # ══════════════════════════════════════════
 app = FastAPI(title="TuyTam Community Status API", docs_url=None, redoc_url=None)
@@ -115,13 +171,19 @@ async def status_donutsmp():
     return await _cached("donutsmp", _fetch_donutsmp)
 
 
+@app.get("/status/feed")
+async def status_feed():
+    return await _cached("feed", _fetch_feed)
+
+
 @app.get("/status/all")
 async def status_all():
-    discord, donutsmp = await asyncio.gather(
+    discord, donutsmp, feed = await asyncio.gather(
         _cached("discord", _fetch_discord),
         _cached("donutsmp", _fetch_donutsmp),
+        _cached("feed", _fetch_feed),
     )
-    return {"discord": discord, "donutsmp": donutsmp}
+    return {"discord": discord, "donutsmp": donutsmp, "feed": feed}
 
 
 @app.get("/health")
